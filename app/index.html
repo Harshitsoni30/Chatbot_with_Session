@@ -1,3 +1,77 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Streaming Recipe Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2em; }
+        #outputRaw { background: #222; color: #0f0; padding: 1em; border-radius: 8px; min-height: 100px; }
+        #outputMarkdown { background: #fff; color: #222; padding: 1em; border-radius: 8px; min-height: 200px; margin-top: 1em; border: 1px solid #ccc; }
+        button { padding: 0.5em 1em; font-size: 1em; }
+    </style>
+    <!-- Load marked.js from CDN -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <h2>Test /chat/stream-recipe Streaming Endpoint</h2>
+    <input id="userQuery" type="text" placeholder="Enter your recipe query" style="width: 350px; padding: 0.5em; font-size: 1em; margin-bottom: 1em;" />
+    <button id="startBtn">Start Streaming</button>
+    <h4>Raw Markdown Output:</h4>
+    <pre id="outputRaw"></pre>
+    <h4>Rendered Markdown:</h4>
+    <div id="outputMarkdown"></div>
+    <script>
+    document.getElementById('startBtn').onclick = async function() {
+        const outputRaw = document.getElementById('outputRaw');
+        const outputMarkdown = document.getElementById('outputMarkdown');
+        const userQueryInput = document.getElementById('userQuery').value;
+        outputRaw.textContent = '';
+        outputMarkdown.innerHTML = '';
+
+        // Set user_query to null if input is empty
+        const user_query = userQueryInput ? userQueryInput : null;
+
+        const body = JSON.stringify({
+            "session_id":"f08f4518-18a7-4ebc-bb0f-6d159a7784f4",
+            "prompt": user_query
+        });
+
+        let fullText = '';
+        try {
+            const response = await fetch('http://127.0.0.1:8000/session/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'                },
+                body
+            });
+            if (!response.body) {
+                outputRaw.textContent = 'Streaming not supported in this browser.';
+                outputMarkdown.innerHTML = '';
+                return;
+            }
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let done = false;
+            while (!done) {
+                const { value, done: doneReading } = await reader.read();
+                done = doneReading;
+                if (value) {
+                    const chunk = decoder.decode(value, { stream: true });
+                    fullText += chunk;
+                    outputRaw.textContent = fullText;
+                    outputMarkdown.innerHTML = marked.parse(fullText);
+                    window.scrollTo(0, document.body.scrollHeight);
+                }
+            }
+            // Log the full response and user query after streaming is done
+        } catch (err) {
+            outputRaw.textContent = 'Error: ' + err;
+            outputMarkdown.innerHTML = '';
+        }
+    };
+    </script>
+</body>
+</html> --> -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -39,12 +113,16 @@
 
         const formData = new FormData();
         formData.append('uploaded_pdf', fileInput.files[0]);
-        formData.append('session_id', 'aa870fb6-e2a4-427a-973f-c45b38df2780'); // You can generate or manage this as needed
+        formData.append('session_id', 'd1691d7d-abb9-4c52-867f-ddb6deea51c9'); // You can generate or manage this as needed
 
         try {
             const res = await fetch('http://127.0.0.1:8000/upload/pdf', {
                 method: 'POST',
-                body: formData
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFtYW4yMDAycmV3YTFwYXRoYWtAZ21haWwuY29tIiwiZXhwIjoxNzQ4NDI3MDg4fQ.uq0ZaoXM57HHenpq3U-lVBe0YceA2_Y1SVm36vV4_EU' // <-- Insert your token here if needed
+                },
+                body
             });
 
             if (!res.ok) throw new Error('Failed to upload file');
@@ -66,7 +144,7 @@
         outputMarkdown.innerHTML = '';
 
         const body = JSON.stringify({
-            session_id: "aa870fb6-e2a4-427a-973f-c45b38df2780",
+            session_id: "d1691d7d-abb9-4c52-867f-ddb6deea51c9",
             prompt: userQuery,
             file_path: uploadedFilePath
         });
