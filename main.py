@@ -1,13 +1,13 @@
 from typing import Annotated
 from fastapi import FastAPI, HTTPException, status, Depends
-from schemas.auth import UserRegister, UserOut, UserLogin, TokenVerify, ResetPassword, OTPVerifyRequest, ForgotPasswordRequest, VerifyOTPRequest, SessionCreate
-from schemas.auth import ChatSessionInput, ChatHistroyInput ,PDFUpload
-from models.user import create_user, get_user_by_email, get_user_by_username,verify_password, update_user_password, get_current_user, generate_title
+from app.schemas.auth import UserRegister, UserOut, UserLogin, TokenVerify, ResetPassword, OTPVerifyRequest, ForgotPasswordRequest, VerifyOTPRequest, SessionCreate
+from app.schemas.auth import ChatSessionInput, ChatHistroyInput ,PDFUpload
+from app.models.user import create_user, get_user_by_email, get_user_by_username,verify_password, update_user_password, get_current_user, generate_title
 from bson import ObjectId
 from fastapi import FastAPI, Form
-from validations.sender_email import generate_otp, send_otp_email
+from app.validations.sender_email import generate_otp, send_otp_email
 from fastapi import HTTPException, status
-from utils.jwt import create_access_token
+from app.utils.jwt import create_access_token
 from datetime import timedelta
 from jose import JWTError, jwt
 from dotenv import load_dotenv
@@ -15,7 +15,7 @@ import os
 from typing import Set
 from uuid import uuid4
 from datetime import datetime
-from db.session import session_collection, session_title_collection
+from app.db.session import session_collection, session_title_collection
 from fastapi import FastAPI, Request
 from pydantic import BaseModel
 from phi.agent import Agent
@@ -34,7 +34,7 @@ import os
 from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
 from datetime import datetime
-from routers.agent import create_agent, load_combined_knowledge_base
+from app.routers.agent import create_agent, load_combined_knowledge_base
 import os
 from fastapi import FastAPI, File, UploadFile, Form
 
@@ -271,12 +271,13 @@ async def create_chat_session_stream(chat_data: ChatSessionInput):
         nonlocal full_response
         
         response = agent.run(prompt, stream=True)
+        # breakpoint()
         # print(response.content)
         for chunk in response:
             if chunk and chunk.content:
                 full_response += chunk.content
                 yield chunk.content
-        # print("full_response",full_response)
+        print("full_response",full_response)
 
         # Store messages
         user_msg = {"role": "user", "content": prompt}
