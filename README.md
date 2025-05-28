@@ -6,7 +6,7 @@ This project is a chatbot designed to provide information on recipies. The chatb
 ## Features
 - Provides thai recipes.
 - Built with **FastAPI** for efficient and scalable API handling.
-- Integrates OpenAI's LLM for natural language processing.
+- Integrates Gemini LLM for natural language processing.
 ## Prerequisites
 Before you begin, ensure you have met the following requirements:
 - Python 3.8 or higher
